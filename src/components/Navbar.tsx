@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
   };
 
   // Hide navbar on all login/register pages
-  const hiddenPaths = ['/seller/login', '/seller/register', '/admin/login', '/login'];
+  const hiddenPaths = ['/seller/login', '/seller/register', '/admin/login', '/login', '/register'];
   if (hiddenPaths.includes(location.pathname)) return null;
   if (!isAuthenticated) return null;
 

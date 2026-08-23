@@ -84,6 +84,10 @@ const BuyerLoginPage: React.FC = () => {
 
         <div className="auth-footer">
           <p>
+            Don't have an account?{' '}
+            <Link to="/register" className="link">Register here</Link>
+          </p>
+          <p style={{ marginTop: '10px' }}>
             Want to sell?{' '}
             <Link to="/seller/login" className="link">Seller Login</Link>
           </p>
