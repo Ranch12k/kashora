@@ -38,12 +38,13 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        // Was never logged in, so just reject to let caller handle 401
+        return Promise.reject(error);
+      }
 
+      try {
         const response = await axios.post(`${API_BASE_URL}auth/token/refresh/`, {
           refresh: refreshToken,
         });
@@ -55,7 +56,16 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/seller/login';
+        
+        const path = window.location.pathname;
+        if (path.startsWith('/admin')) {
+          window.location.href = '/admin/login';
+        } else if (path.startsWith('/buyer') || path === '/checkout' || path === '/profile' || path === '/orders' || path === '/wishlist') {
+          window.location.href = '/login';
+        } else {
+          window.location.href = '/seller/login';
+        }
+        
         return Promise.reject(refreshError);
       }
     }
@@ -654,17 +664,87 @@ export interface WishlistItem {
   created_at: string;
 }
 
+const getGuestCart = (): Cart => {
+  const data = localStorage.getItem('guest_cart');
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {}
+  }
+  return { id: 'guest', items: [], total_price: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+};
+
+const saveGuestCart = (cart: Cart) => {
+  localStorage.setItem('guest_cart', JSON.stringify(cart));
+};
+
 export const cartAPI = {
-  get: () =>
-    apiClient.get<Cart>('cart/'),
-  add: (variantId: string, quantity: number = 1) =>
-    apiClient.post<Cart>('cart/add/', { variant_id: variantId, quantity }),
-  updateItem: (itemId: string, quantity: number) =>
-    apiClient.patch<Cart>(`cart/item/${itemId}/`, { quantity }),
-  deleteItem: (itemId: string) =>
-    apiClient.delete<Cart>(`cart/item/${itemId}/`),
-  clear: () =>
-    apiClient.post('cart/clear/'),
+  get: async () => {
+    if (!localStorage.getItem('accessToken')) {
+      return { data: getGuestCart() } as any;
+    }
+    return apiClient.get<Cart>('cart/');
+  },
+  add: async (variantId: string, quantity: number = 1, guestItemDetails?: any) => {
+    if (!localStorage.getItem('accessToken')) {
+      const cart = getGuestCart();
+      const existing = cart.items.find(i => i.variant_id === variantId);
+      if (existing) {
+        existing.quantity += quantity;
+        existing.subtotal = existing.quantity * parseFloat(existing.price || '0');
+      } else {
+        cart.items.push({
+          id: 'item_' + Date.now(),
+          variant_id: variantId,
+          sku: guestItemDetails?.sku || 'N/A',
+          product_name: guestItemDetails?.product_name || 'Guest Item',
+          product_slug: guestItemDetails?.product_slug || '',
+          price: guestItemDetails?.price || '0',
+          quantity: quantity,
+          subtotal: quantity * parseFloat(guestItemDetails?.price || '0'),
+          in_stock: true,
+          available_quantity: 999,
+          primary_image: guestItemDetails?.primary_image || null,
+          created_at: new Date().toISOString()
+        });
+      }
+      cart.total_price = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
+      saveGuestCart(cart);
+      return { data: cart } as any;
+    }
+    return apiClient.post<Cart>('cart/add/', { variant_id: variantId, quantity });
+  },
+  updateItem: async (itemId: string, quantity: number) => {
+    if (!localStorage.getItem('accessToken')) {
+      const cart = getGuestCart();
+      const existing = cart.items.find(i => i.id === itemId);
+      if (existing) {
+        existing.quantity = quantity;
+        existing.subtotal = quantity * parseFloat(existing.price || '0');
+        cart.total_price = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
+        saveGuestCart(cart);
+      }
+      return { data: cart } as any;
+    }
+    return apiClient.patch<Cart>(`cart/item/${itemId}/`, { quantity });
+  },
+  deleteItem: async (itemId: string) => {
+    if (!localStorage.getItem('accessToken')) {
+      const cart = getGuestCart();
+      cart.items = cart.items.filter(i => i.id !== itemId);
+      cart.total_price = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
+      saveGuestCart(cart);
+      return { data: cart } as any;
+    }
+    return apiClient.delete<Cart>(`cart/item/${itemId}/`);
+  },
+  clear: async () => {
+    if (!localStorage.getItem('accessToken')) {
+      localStorage.removeItem('guest_cart');
+      return { data: getGuestCart() } as any;
+    }
+    return apiClient.post('cart/clear/');
+  },
 };
 
 export const wishlistAPI = {

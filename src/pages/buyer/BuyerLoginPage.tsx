@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/auth.css';
 
@@ -11,6 +11,8 @@ const BuyerLoginPage: React.FC = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/products';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ const BuyerLoginPage: React.FC = () => {
       const data = await login(phone, password);
       const role = data.user?.role;
       if (role === 'BUYER') {
-        navigate('/products');
+        navigate(from);
       } else if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
         navigate('/admin/sellers');
       } else if (role === 'SELLER') {
@@ -85,7 +87,7 @@ const BuyerLoginPage: React.FC = () => {
         <div className="auth-footer">
           <p>
             Don't have an account?{' '}
-            <Link to="/register" className="link">Register here</Link>
+            <Link to="/register" state={{ from: location.state?.from }} className="link">Register here</Link>
           </p>
           <p style={{ marginTop: '10px' }}>
             Want to sell?{' '}

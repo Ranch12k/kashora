@@ -112,7 +112,7 @@ const App: React.FC = () => {
             <Route path="/products/:slug" element={<ProductDetailPage />} />
             <Route path="/categories/:slug" element={<CategoryRedirect />} />
             <Route path="/profile" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><BuyerProfilePage /></ProtectedRoute>} />
-            <Route path="/cart" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><CartPage /></ProtectedRoute>} />
+            <Route path="/cart" element={<CartPage />} />
             <Route path="/wishlist" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><WishlistPage /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><CheckoutPage /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><OrderListPage /></ProtectedRoute>} />

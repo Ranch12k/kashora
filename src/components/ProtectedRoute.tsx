@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
@@ -13,14 +13,34 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return <div className="loading-container">Loading...</div>;
   }
 
   if (!isAuthenticated || !user) {
-    // Send each role type to the right login page
-    return <Navigate to="/seller/login" replace />;
+    // Dynamically redirect based on requiredRole or path
+    let redirectPath = '/seller/login';
+
+    if (requiredRole) {
+      const allowed = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+      if (allowed.includes('ADMIN') || allowed.includes('SUPER_ADMIN')) {
+        redirectPath = '/admin/login';
+      } else if (allowed.includes('BUYER') && !allowed.includes('SELLER')) {
+        redirectPath = '/login';
+      } else if (allowed.includes('BUYER') && allowed.includes('SELLER')) {
+        // Mixed role, check path
+        if (location.pathname.startsWith('/buyer') || location.pathname === '/checkout' || location.pathname === '/profile' || location.pathname === '/orders' || location.pathname === '/wishlist') {
+          redirectPath = '/login';
+        }
+      }
+    } else {
+      if (location.pathname.startsWith('/admin')) redirectPath = '/admin/login';
+      else if (location.pathname.startsWith('/buyer') || location.pathname === '/checkout' || location.pathname === '/profile' || location.pathname === '/orders' || location.pathname === '/wishlist') redirectPath = '/login';
+    }
+
+    return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
   if (requiredRole) {

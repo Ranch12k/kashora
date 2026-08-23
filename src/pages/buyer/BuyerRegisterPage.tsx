@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authAPI } from '../../services/api';
 import '../../styles/auth.css';
 
@@ -26,6 +26,7 @@ const BuyerRegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const validateForm = (): boolean => {
     const newErrors: Partial<RegisterFormData> = {};
@@ -103,7 +104,7 @@ const BuyerRegisterPage: React.FC = () => {
 
       // Show success and redirect to login
       navigate('/login', {
-        state: { message: 'Registration successful! Please login with your credentials.' },
+        state: { message: 'Registration successful! Please login with your credentials.', from: location.state?.from },
       });
     } catch (err: any) {
       const errorMessage =

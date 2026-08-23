@@ -70,7 +70,17 @@ export const ProductDetailPage: React.FC = () => {
       alert('Please select a variant option first.');
       return;
     }
-    cartAPI.add(selectedVariantId, 1)
+    
+    const selectedVariant = product?.variants.find(v => v.id === selectedVariantId);
+    const guestItemDetails = {
+      sku: selectedVariant?.sku || 'N/A',
+      product_name: product?.name,
+      product_slug: product?.slug,
+      price: selectedVariant?.price || product?.base_price,
+      primary_image: product?.images?.find(img => img.is_primary)?.image || product?.images?.[0]?.image || null
+    };
+
+    cartAPI.add(selectedVariantId, 1, guestItemDetails)
       .then(() => {
         alert('Product added to shopping cart!');
         navigate('/cart');
