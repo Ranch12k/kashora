@@ -4,7 +4,7 @@ import { wishlistAPI, cartAPI, WishlistItem } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
 
 const S = {
-  container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
+  container: { padding: '2rem 4%', width: '100%', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' },
   card: { background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9', position: 'relative' as const },
   imageContainer: { width: '100%', height: '240px', background: '#f8fafc', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' },

@@ -257,7 +257,7 @@
 
 /* ── Homepage Specific Redesign Sections ─────────────────────────────── */
 .byr-homepage { display: flex; flex-direction: column; gap: 40px; width: 100%; }
-.byr-section { padding: 0 32px; max-width: 1440px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.byr-section { padding: 0 32px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 
 /* Hero Banner */
 .byr-hero {
@@ -339,7 +339,7 @@
 .byr-promo-strip__btn { background: #fff; color: var(--byr-text-1); border: none; padding: 12px 24px; border-radius: 99px; font-weight: 800; cursor: pointer; }
 
 /* ── Products Page specific ─────────────────────────────── */
-.byr-page { padding: 32px; max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%; box-sizing: border-box; }
+.byr-page { padding: 32px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; box-sizing: border-box; }
 
 .byr-products-section {
   display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start;
@@ -460,7 +460,7 @@
 .byr-page-btn--active:hover { background: var(--byr-accent); color: #fff; }
 
 /* ── Common Buyer UI Components ─────────────────────────── */
-.byr-container { padding: 32px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.byr-container { padding: 32px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 .byr-title { font-size: 2rem; font-weight: 800; color: var(--byr-text-1); margin-bottom: 24px; }
 .byr-section-title { font-size: 1.25rem; font-weight: 700; color: var(--byr-text-1); margin-bottom: 16px; }
 

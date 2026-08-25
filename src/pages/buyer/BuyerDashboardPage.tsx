@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Premium Meesho/Amazon–style colors and styling
 const S = {
-  container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Inter', sans-serif", minHeight: '100vh', background: '#f8fafc' },
+  container: { padding: '2rem 4%', width: '100%', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Inter', sans-serif", minHeight: '100vh', background: '#f8fafc' },
   header: {
     background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)',
     borderRadius: '16px',

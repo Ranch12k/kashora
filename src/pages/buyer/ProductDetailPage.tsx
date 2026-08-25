@@ -4,7 +4,7 @@ import { publicProductAPI, PublicProductDetail, ProductImage, cartAPI, wishlistA
 import BuyerLayout from '../../components/BuyerLayout';
 
 const S = {
-  container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
+  container: { padding: '2rem 4%', width: '100%', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
   backBtn: { padding: '0.5rem 1rem', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: '#475569', fontSize: '0.85rem', marginBottom: '1.5rem' },
   layout: { display: 'grid', gridTemplateColumns: '1fr 500px', gap: '3rem' },
   gallery: { display: 'flex', flexDirection: 'column' as const, gap: '1rem' },
