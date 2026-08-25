@@ -18,7 +18,7 @@ export const ProductListPage: React.FC = () => {
   const selectedCatSlug = searchParams.get('category') || '';
   const minPrice = searchParams.get('min_price') || '';
   const maxPrice = searchParams.get('max_price') || '';
-  const availability = searchParams.get('availability') || '';
+  const availability = searchParams.get('availability') === null ? 'in_stock' : searchParams.get('availability');
   const brand = searchParams.get('brand') || '';
   const ordering = searchParams.get('ordering') || '-created_at';
   const page = Number(searchParams.get('page')) || 1;
@@ -35,7 +35,7 @@ export const ProductListPage: React.FC = () => {
     if (selectedCatSlug) params.category_slug = selectedCatSlug;
     if (minPrice) params.min_price = minPrice;
     if (maxPrice) params.max_price = maxPrice;
-    if (availability) params.availability = availability;
+    if (availability && availability !== 'all') params.availability = availability;
     if (brand) params.brand = brand;
     if (ordering) params.ordering = ordering;
 
@@ -293,7 +293,7 @@ export const ProductListPage: React.FC = () => {
 
               <h3 className="byr-sidebar__title" style={{ marginTop: 32 }}>Availability</h3>
               <label style={{ display: 'flex', gap: 8, fontSize: '0.95rem', color: 'var(--byr-text-2)', marginBottom: 8, cursor: 'pointer' }}>
-                <input type="radio" name="avail" checked={!availability} onChange={() => updateParam('availability', '')} />
+                <input type="radio" name="avail" checked={availability === 'all'} onChange={() => updateParam('availability', 'all')} />
                 All Items
               </label>
               <label style={{ display: 'flex', gap: 8, fontSize: '0.95rem', color: 'var(--byr-text-2)', marginBottom: 8, cursor: 'pointer' }}>
@@ -368,13 +368,13 @@ export const ProductListPage: React.FC = () => {
                   Brand: {brand} <span className="byr-chip__remove" onClick={() => updateParam('brand', '')}>×</span>
                 </span>
               )}
-              {availability && (
+              {availability && availability !== 'all' && (
                 <span className="byr-chip">
                   {availability === 'in_stock' ? 'In Stock' : 'Out of Stock'}{' '}
-                  <span className="byr-chip__remove" onClick={() => updateParam('availability', '')}>×</span>
+                  <span className="byr-chip__remove" onClick={() => updateParam('availability', 'all')}>×</span>
                 </span>
               )}
-              {(query || selectedCatSlug || minPrice || maxPrice || availability) && (
+              {(query || selectedCatSlug || minPrice || maxPrice || (availability && availability !== 'all' && availability !== 'in_stock')) && (
                 <button className="byr-clear-btn" onClick={clearAllFilters}>Clear All Filters</button>
               )}
             </div>
