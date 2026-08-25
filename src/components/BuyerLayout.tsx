@@ -121,8 +121,8 @@ export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, in
             <button onClick={toggleTheme} className="byr-theme-toggle" title="Toggle Theme">
               {theme === 'light' ? '🌙' : '☀️'}
             </button>
-            <Link to={getSellerRoute()} className="byr-nav-link">Become a Seller</Link>
-            <Link to="/investors" className="byr-nav-link">Investor Relations</Link>
+            <Link to={getSellerRoute()} className="byr-nav-link byr-hide-mobile">Become a Seller</Link>
+            <Link to="/investors" className="byr-nav-link byr-hide-mobile">Investor Relations</Link>
             <Link to="/cart" className="byr-nav-link">🛒 Cart {cartCount > 0 && `(${cartCount})`}</Link>
             
             {isAuthenticated ? (
