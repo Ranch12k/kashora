@@ -85,7 +85,7 @@
   position: sticky; top: 0; z-index: 100;
 }
 .byr-header__main {
-  max-width: 1800px; margin: 0 auto;
+  max-width: 100%; margin: 0 auto;
   padding: 12px 32px;
   display: flex; align-items: center; justify-content: space-between; gap: 32px;
 }
@@ -191,7 +191,7 @@
   background: var(--byr-header-bg); overflow: hidden;
 }
 .byr-catnav__inner {
-  max-width: 1800px; margin: 0 auto;
+  max-width: 100%; margin: 0 auto;
   display: flex; gap: 24px; padding: 16px 32px; position: relative;
   overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -238,7 +238,7 @@
   margin-top: 64px; padding: 48px 32px 24px 32px;
 }
 .byr-footer__grid {
-  max-width: 1800px; margin: 0 auto;
+  max-width: 100%; margin: 0 auto;
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
 }
 .byr-footer__col { display: flex; flex-direction: column; gap: 12px; }
@@ -288,7 +288,7 @@
 .byr-h-scroll {
   display: flex; gap: 24px; overflow-x: auto; padding-bottom: 16px;
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  width: 100%; box-sizing: border-box; scroll-snap-type: x mandatory;
+  width: fit-content; max-width: 100%; margin: 0 auto; box-sizing: border-box; scroll-snap-type: x mandatory;
 }
 .byr-h-scroll > * { scroll-snap-align: start; }
 .byr-h-scroll::-webkit-scrollbar { display: none; }
@@ -400,7 +400,7 @@
 }
 
 .byr-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;
   width: 100%; box-sizing: border-box;
 }
 .byr-card {
