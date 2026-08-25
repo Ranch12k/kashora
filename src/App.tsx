@@ -177,7 +177,7 @@ const App: React.FC = () => {
             </Route>
 
             {/* ── Redirects ── */}
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/" element={<Navigate to="/products" />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
