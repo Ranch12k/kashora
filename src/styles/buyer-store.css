@@ -90,7 +90,7 @@
   display: flex; align-items: center; justify-content: space-between; gap: 32px;
 }
 .byr-logo {
-  font-size: 1.6rem; font-weight: 800;
+  font-size: 2.2rem; font-weight: 800;
   color: var(--byr-accent); text-decoration: none;
   letter-spacing: -0.02em;
 }
@@ -140,7 +140,7 @@
 /* Nav Right */
 .byr-nav-right {
   display: flex; align-items: center; gap: 28px;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
 }
 .byr-nav-link {
   text-decoration: none; color: var(--byr-text-2);
@@ -210,14 +210,14 @@
   color: var(--byr-accent); font-weight: 700;
 }
 .byr-cat-img-wrap {
-  width: 64px; height: 64px; border-radius: 50%;
+  width: 90px; height: 90px; border-radius: 50%;
   background: var(--byr-bg); border: 2px solid transparent;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; transition: all var(--byr-transition);
 }
 .byr-cat-img { width: 100%; height: 100%; object-fit: cover; }
 .byr-cat-label {
-  font-size: 0.85rem; font-weight: 600; color: var(--byr-text-2);
+  font-size: 1.05rem; font-weight: 600; color: var(--byr-text-2);
   transition: color var(--byr-transition); text-align: center;
 }
 
@@ -281,7 +281,7 @@
 }
 .byr-benefits::-webkit-scrollbar { display: none; }
 .byr-benefit-item {
-  display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--byr-text-1); font-size: 1rem; min-width: fit-content;
+  display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--byr-text-1); font-size: 1.25rem; min-width: fit-content;
 }
 
 /* Horizontal Carousels */
@@ -298,13 +298,13 @@
   display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; text-decoration: none;
 }
 .byr-circle-cat__img-wrap {
-  width: 96px; height: 96px; border-radius: 50%; background: var(--byr-accent-light);
+  width: 140px; height: 140px; border-radius: 50%; background: var(--byr-accent-light);
   display: flex; align-items: center; justify-content: center; overflow: hidden;
   border: 2px solid transparent; transition: all var(--byr-transition);
 }
 .byr-circle-cat:hover .byr-circle-cat__img-wrap { border-color: var(--byr-accent); transform: scale(1.05); }
 .byr-circle-cat__img { width: 100%; height: 100%; object-fit: cover; }
-.byr-circle-cat__label { font-weight: 600; color: var(--byr-text-1); font-size: 0.95rem; text-align: center; }
+.byr-circle-cat__label { font-weight: 600; color: var(--byr-text-1); font-size: 1.15rem; text-align: center; }
 
 /* Section Headers */
 .byr-section-header {
