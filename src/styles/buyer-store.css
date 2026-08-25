@@ -288,7 +288,7 @@
 .byr-h-scroll {
   display: flex; gap: 24px; overflow-x: auto; padding-bottom: 16px;
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  width: fit-content; max-width: 100%; margin: 0 auto; box-sizing: border-box; scroll-snap-type: x mandatory;
+  width: 100%; box-sizing: border-box; scroll-snap-type: x mandatory;
 }
 .byr-h-scroll > * { scroll-snap-align: start; }
 .byr-h-scroll::-webkit-scrollbar { display: none; }
@@ -400,7 +400,7 @@
 }
 
 .byr-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
   width: 100%; box-sizing: border-box;
 }
 .byr-card {
