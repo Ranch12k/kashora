@@ -261,7 +261,7 @@
 
 /* Hero Banner */
 .byr-hero {
-  background: linear-gradient(135deg, var(--byr-accent-light) 0%, #fff 100%);
+  background: linear-gradient(135deg, var(--byr-accent-light) 0%, var(--byr-card-bg) 100%);
   border-radius: var(--byr-radius); overflow: hidden;
   display: flex; align-items: center; justify-content: space-between;
   padding: 48px; border: 1px solid var(--byr-card-border);
@@ -334,11 +334,11 @@
 
 /* Promo Banners */
 .byr-promo-strip {
-  background: var(--byr-text-1); border-radius: var(--byr-radius); padding: 32px 48px;
+  background: linear-gradient(135deg, var(--byr-accent), var(--byr-accent-hover)); border-radius: var(--byr-radius); padding: 32px 48px;
   display: flex; justify-content: space-between; align-items: center; color: #fff;
 }
 .byr-promo-strip__title { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
-.byr-promo-strip__btn { background: #fff; color: var(--byr-text-1); border: none; padding: 12px 24px; border-radius: 99px; font-weight: 800; cursor: pointer; }
+.byr-promo-strip__btn { background: #fff; color: var(--byr-accent-hover); border: none; padding: 12px 24px; border-radius: 99px; font-weight: 800; cursor: pointer; }
 
 /* ── Products Page specific ─────────────────────────────── */
 .byr-page { padding: 32px 2%; width: 100%; display: flex; flex-direction: column; gap: 32px; box-sizing: border-box; }

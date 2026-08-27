@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { publicProductAPI, categoryAPI, settingsAPI, Category, PublicProduct, SiteSettings } from '../../services/api';
+import { publicProductAPI, categoryAPI, settingsAPI, wishlistAPI, Category, PublicProduct, SiteSettings } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
+import { useAuth } from '../../context/AuthContext';
 
 export const ProductListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ export const ProductListPage: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const [wishlistSlugs, setWishlistSlugs] = useState<Set<string>>(new Set());
 
   // Filter & Search states from URL Params
   const query = searchParams.get('search') || '';
@@ -27,6 +30,19 @@ export const ProductListPage: React.FC = () => {
     categoryAPI.getCategories().then(res => setCategories(res.data));
     settingsAPI.get().then(res => setSiteSettings(res.data)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      wishlistAPI.list()
+        .then(res => {
+          const slugs = new Set<string>(res.data.map((item: any) => item.product_slug));
+          setWishlistSlugs(slugs);
+        })
+        .catch(err => console.error(err));
+    } else {
+      setWishlistSlugs(new Set());
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     setLoading(true);
@@ -391,7 +407,11 @@ export const ProductListPage: React.FC = () => {
                   return (
                     <div key={p.id} className="byr-card" onClick={() => navigate(`/products/${p.slug}`)}>
                       <div className="byr-card__img-wrap">
-                        <div className="byr-card__wishlist" onClick={(e) => { e.stopPropagation(); alert('Added to wishlist!'); }}>♡</div>
+                        <div className="byr-card__wishlist" onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.slug}`); }}>
+                          <span style={{ color: wishlistSlugs.has(p.slug) ? 'var(--byr-accent)' : 'inherit', transition: 'color 0.2s' }}>
+                            {wishlistSlugs.has(p.slug) ? '♥' : '♡'}
+                          </span>
+                        </div>
                         {p.primary_image ? (
                           <img src={p.primary_image} alt={p.name} className="byr-card__img" />
                         ) : (
