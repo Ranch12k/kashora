@@ -24,6 +24,7 @@ import WishlistPage from './pages/buyer/WishlistPage';
 import CheckoutPage from './pages/buyer/CheckoutPage';
 import OrderListPage from './pages/buyer/OrderListPage';
 import OrderDetailPage from './pages/buyer/OrderDetailPage';
+import BuyerMessagesPage from './pages/buyer/BuyerMessagesPage';
 import SellerOrderListPage from './pages/seller/SellerOrderListPage';
 
 // Seller Pages
@@ -32,6 +33,8 @@ import SellerProfilePage from './pages/seller/SellerProfilePage';
 import SellerProductListPage from './pages/seller/SellerProductListPage';
 import SellerProductDetailPage from './pages/seller/SellerProductDetailPage';
 import { SellerProductCreatePage, SellerProductEditPage } from './pages/seller/SellerProductFormPage';
+import SellerCouponListPage from './pages/seller/SellerCouponListPage';
+import SellerMessagesPage from './pages/seller/SellerMessagesPage';
 import InventoryListPage from './pages/seller/InventoryListPage';
 import InventoryDetailPage from './pages/seller/InventoryDetailPage';
 
@@ -117,6 +120,7 @@ const App: React.FC = () => {
             <Route path="/checkout" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><CheckoutPage /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><OrderListPage /></ProtectedRoute>} />
             <Route path="/orders/:id" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><OrderDetailPage /></ProtectedRoute>} />
+            <Route path="/messages" element={<ProtectedRoute requiredRole={['BUYER', 'SELLER']}><BuyerMessagesPage /></ProtectedRoute>} />
 
             {/* ── Buyer Routes ── */}
             <Route path="/buyer/*" element={
@@ -143,6 +147,8 @@ const App: React.FC = () => {
               <Route path="inventory" element={<InventoryListPage />} />
               <Route path="inventory/:id" element={<InventoryDetailPage />} />
               <Route path="orders" element={<SellerOrderListPage />} />
+              <Route path="coupons" element={<SellerCouponListPage />} />
+              <Route path="messages" element={<SellerMessagesPage />} />
               <Route path="*" element={<Navigate to="/seller/dashboard" />} />
             </Route>
 

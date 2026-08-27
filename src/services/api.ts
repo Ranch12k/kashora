@@ -13,7 +13,7 @@ if (!API_BASE_URL.endsWith('/')) {
 }
 
 // Create axios instance
-const apiClient: AxiosInstance = axios.create({
+export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -814,6 +814,7 @@ export interface CheckoutPayload {
   payment_method: 'COD' | 'PREPAID';
   shipping_address: ShippingAddress;
   notes?: string;
+  coupon_code?: string;
 }
 
 export interface SellerOrderItem {
@@ -842,6 +843,18 @@ export const orderAPI = {
     apiClient.post<Order>('orders/checkout/', data),
   cancel: (id: string) =>
     apiClient.post<Order>(`orders/${id}/cancel/`),
+  validateCoupon: (data: { code: string; order_amount: number }) =>
+    apiClient.post<{valid: boolean; coupon_code: string; discount_type: string; discount_value: string; discount_amount: string}>('coupons/validate/', data),
+    
+  createPaymentIntent: (orderId: string) =>
+    apiClient.post<{clientSecret: string}>('payments/create-intent/', { order_id: orderId }),
+};
+
+export const chatAPI = {
+  getThreads: () => apiClient.get('chat/'),
+  startThread: (targetUserId: string) => apiClient.post('chat/start_thread/', { target_user_id: targetUserId }),
+  getMessages: (threadId: string) => apiClient.get(`chat/${threadId}/messages/`),
+  sendMessage: (threadId: string, content: string) => apiClient.post(`chat/${threadId}/send_message/`, { content }),
 };
 
 export const sellerOrderAPI = {

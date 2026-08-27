@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { orderAPI, cartAPI, CheckoutPayload } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { PaymentForm } from './PaymentForm';
+
+// Initialize Stripe (mock key for development)
+const stripePromise = loadStripe('pk_test_mock');
 
 
 interface FormData {
@@ -28,6 +34,16 @@ export const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [cartData, setCartData] = useState<any>(null);
   const [error, setError] = useState('');
+  
+  // Coupon State
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponError, setCouponError] = useState('');
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  // Stripe State
+  const [clientSecret, setClientSecret] = useState('');
+  const [orderId, setOrderId] = useState('');
 
   React.useEffect(() => {
     cartAPI.get()
@@ -59,10 +75,26 @@ export const CheckoutPage: React.FC = () => {
       shipping_address: { full_name, phone, line1, line2: form.line2, city, state, pincode },
       notes,
     };
+    
+    if (appliedCoupon) {
+      payload.coupon_code = appliedCoupon.coupon_code;
+    }
 
     orderAPI.checkout(payload)
-      .then(res => {
-        navigate(`/orders/${res.data.id}`, { state: { orderPlaced: true } });
+      .then(async res => {
+        const createdOrderId = res.data.id;
+        
+        if (payment_method === 'PREPAID') {
+          try {
+            const intentRes = await orderAPI.createPaymentIntent(createdOrderId);
+            setClientSecret(intentRes.data.clientSecret);
+            setOrderId(createdOrderId);
+          } catch (err: any) {
+            setError(err.response?.data?.detail || 'Failed to initialize payment.');
+          }
+        } else {
+          navigate(`/orders/${createdOrderId}`, { state: { orderPlaced: true } });
+        }
       })
       .catch(err => {
         setError(err.response?.data?.detail || 'Something went wrong. Please try again.');
@@ -72,8 +104,46 @@ export const CheckoutPage: React.FC = () => {
 
   if (!cartData) return <BuyerLayout><div className="byr-container">Loading checkout...</div></BuyerLayout>;
 
-  const shippingFee = cartData.items.length > 0 ? 40 : 0;
-  const grandTotal = Number(cartData.total_price) + shippingFee;
+  if (clientSecret) {
+    return (
+      <BuyerLayout>
+        <div className="byr-container" style={{ maxWidth: '800px' }}>
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <PaymentForm orderId={orderId} clientSecret={clientSecret} />
+          </Elements>
+        </div>
+      </BuyerLayout>
+    );
+  }
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setValidatingCoupon(true);
+    setCouponError('');
+    try {
+      const res = await orderAPI.validateCoupon({
+        code: couponCode,
+        order_amount: cartData.total_price
+      });
+      setAppliedCoupon(res.data);
+    } catch (err: any) {
+      setAppliedCoupon(null);
+      setCouponError(err.response?.data?.non_field_errors?.[0] || 'Invalid coupon code');
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+  };
+
+  const shippingFee = cartData.items.length > 0 ? 50 : 0;
+  
+  // Calculate discount
+  const discountAmount = appliedCoupon ? parseFloat(appliedCoupon.discount_amount) : 0;
+  const grandTotal = parseFloat(cartData.total_price) + shippingFee - discountAmount;
 
   return (
     <BuyerLayout>
@@ -125,9 +195,9 @@ export const CheckoutPage: React.FC = () => {
               <input type="radio" name="payment_method" value="COD" checked={form.payment_method === 'COD'} onChange={handleChange} style={{ transform: 'scale(1.2)' }} />
               Cash on Delivery (COD)
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'not-allowed', fontSize: '1rem', color: 'var(--byr-text-3)', fontWeight: 600, opacity: 0.6 }}>
-              <input type="radio" name="payment_method" value="PREPAID" disabled style={{ transform: 'scale(1.2)' }} />
-              Online Payment (Coming Soon)
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '1rem', color: 'var(--byr-text-1)', fontWeight: 600 }}>
+              <input type="radio" name="payment_method" value="PREPAID" checked={form.payment_method === 'PREPAID'} onChange={handleChange} style={{ transform: 'scale(1.2)' }} />
+              Online Payment (Stripe)
             </label>
           </div>
         </div>
@@ -143,6 +213,40 @@ export const CheckoutPage: React.FC = () => {
             style={{ resize: 'vertical', minHeight: '80px' }}
             placeholder="Special instructions for delivery..."
           />
+        </div>
+
+        {/* Coupon Code */}
+        <div className="byr-box">
+          <h3 className="byr-section-title">Apply Coupon</h3>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input 
+              className="byr-input" 
+              value={couponCode} 
+              onChange={e => setCouponCode(e.target.value.toUpperCase())} 
+              placeholder="Enter code" 
+              disabled={!!appliedCoupon}
+              style={{ flex: 1, textTransform: 'uppercase' }}
+            />
+            {!appliedCoupon ? (
+              <button 
+                className="byr-btn byr-btn--secondary" 
+                onClick={handleApplyCoupon}
+                disabled={validatingCoupon || !couponCode}
+              >
+                {validatingCoupon ? '...' : 'Apply'}
+              </button>
+            ) : (
+              <button 
+                className="byr-btn" 
+                style={{ background: 'var(--badge-red-bg)', color: 'var(--badge-red-txt)', border: 'none' }}
+                onClick={removeCoupon}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          {couponError && <p style={{ color: 'red', fontSize: '0.85rem', marginTop: '4px' }}>{couponError}</p>}
+          {appliedCoupon && <p style={{ color: 'green', fontSize: '0.85rem', marginTop: '4px' }}>Coupon applied successfully!</p>}
         </div>
 
         {/* Order Summary */}
@@ -164,9 +268,15 @@ export const CheckoutPage: React.FC = () => {
               <span>Shipping Fee</span>
               <span style={{ fontWeight: 600 }}>₹{shippingFee}</span>
             </div>
+            {appliedCoupon && (
+              <div className="byr-summary-row" style={{ color: 'green' }}>
+                <span>Discount ({appliedCoupon.coupon_code})</span>
+                <span style={{ fontWeight: 600 }}>-₹{appliedCoupon.discount_amount}</span>
+              </div>
+            )}
             <div className="byr-summary-row byr-summary-row--total" style={{ borderTopStyle: 'solid' }}>
               <span>Total to Pay</span>
-              <span>₹{grandTotal}</span>
+              <span>₹{grandTotal.toFixed(2)}</span>
             </div>
           </div>
 

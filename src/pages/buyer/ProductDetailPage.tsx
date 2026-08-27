@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { publicProductAPI, PublicProductDetail, cartAPI, wishlistAPI } from '../../services/api';
+import { publicProductAPI, PublicProductDetail, cartAPI, wishlistAPI, chatAPI } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
 import { useAuth } from '../../context/AuthContext';
 
@@ -283,8 +283,24 @@ export const ProductDetailPage: React.FC = () => {
 
             {/* Seller / Store details */}
             <div style={S.sellerCard}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--byr-text-3)', fontWeight: '700', textTransform: 'uppercase' }}>Sold By</span>
-              <h5 style={{ fontSize: '0.98rem', fontWeight: '700', color: 'var(--byr-text-1)', marginTop: '0.2rem' }}>🏡 {product.seller_store}</h5>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--byr-text-3)', fontWeight: '700', textTransform: 'uppercase' }}>Sold By</span>
+                  <h5 style={{ fontSize: '0.98rem', fontWeight: '700', color: 'var(--byr-text-1)', marginTop: '0.2rem' }}>🏡 {product.seller_store}</h5>
+                </div>
+                {isAuthenticated && (
+                  <button 
+                    onClick={() => {
+                      chatAPI.startThread(product.seller)
+                        .then(() => navigate('/messages'))
+                        .catch(err => alert('Failed to start chat.'));
+                    }}
+                    style={{ padding: '6px 12px', background: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    💬 Message Seller
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

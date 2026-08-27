@@ -11,6 +11,8 @@ const sidebarItems = [
   { name: 'Products',   path: '/seller/products',  icon: '▣' },
   { name: 'Inventory',  path: '/seller/inventory', icon: '≡' },
   { name: 'Orders',     path: '/seller/orders',    icon: '◈' },
+  { name: 'Coupons',    path: '/seller/coupons',   icon: '🎫' },
+  { name: 'Messages',   path: '/seller/messages',  icon: '💬' },
 ];
 
 function LayoutInner({ children }: { children?: React.ReactNode }) {
