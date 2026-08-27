@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { publicProductAPI, PublicProductDetail, ProductImage, cartAPI, wishlistAPI } from '../../services/api';
+import { publicProductAPI, PublicProductDetail, cartAPI, wishlistAPI } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
+import { useAuth } from '../../context/AuthContext';
 
 const S = {
   container: { padding: '2rem 4%', width: '100%', maxWidth: '1280px', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
@@ -42,10 +43,14 @@ const S = {
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState<PublicProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [wishlistItems, setWishlistItems] = useState<any[]>([]);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -65,12 +70,24 @@ export const ProductDetailPage: React.FC = () => {
       .finally(() => setLoading(false));
   }, [slug]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      wishlistAPI.list()
+        .then(res => setWishlistItems(res.data))
+        .catch(err => console.error(err));
+    }
+  }, [isAuthenticated]);
+
+  const wishlistItem = wishlistItems.find(item => item.product_slug === product?.slug);
+  const isWishlisted = !!wishlistItem;
+
   const handleAddToCart = () => {
     if (!selectedVariantId) {
       alert('Please select a variant option first.');
       return;
     }
 
+    setIsAdding(true);
     const selectedVariant = product?.variants.find(v => v.id === selectedVariantId);
     const guestItemDetails = {
       sku: selectedVariant?.sku || 'N/A',
@@ -82,27 +99,38 @@ export const ProductDetailPage: React.FC = () => {
 
     cartAPI.add(selectedVariantId, 1, guestItemDetails)
       .then(() => {
-        // alert('Product added to shopping cart!');
         navigate('/cart');
       })
       .catch(err => {
         alert(err.response?.data?.quantity || 'Failed to add item to cart.');
+        setIsAdding(false);
       });
   };
 
   const handleAddToWishlist = () => {
-    if (!selectedVariantId) {
-      alert('Please select a variant option first.');
+    if (!isAuthenticated) {
+      alert('Please log in to use the wishlist.');
+      navigate('/login', { state: { from: `/products/${product?.slug}` } });
       return;
     }
-    wishlistAPI.add(selectedVariantId)
-      .then(() => {
-        alert('Product added to wishlist!');
-        navigate('/wishlist');
-      })
-      .catch(err => {
-        alert(err.response?.data?.detail || 'Failed to add item to wishlist.');
-      });
+
+    if (isWishlisted) {
+      setIsWishlistLoading(true);
+      wishlistAPI.delete(wishlistItem.id)
+        .then(() => setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id)))
+        .catch(err => console.error(err))
+        .finally(() => setIsWishlistLoading(false));
+    } else {
+      if (!selectedVariantId) {
+        alert('Please select a variant option first.');
+        return;
+      }
+      setIsWishlistLoading(true);
+      wishlistAPI.add(selectedVariantId)
+        .then(res => setWishlistItems(prev => [...prev, res.data]))
+        .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'))
+        .finally(() => setIsWishlistLoading(false));
+    }
   };
 
   if (loading) {
@@ -124,7 +152,6 @@ export const ProductDetailPage: React.FC = () => {
     );
   }
 
-  // Calculate selected variant pricing / details
   const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
   const currentPrice = selectedVariant ? selectedVariant.price : product.base_price;
   const currentComparePrice = selectedVariant ? selectedVariant.compare_at_price : product.compare_at_price;
@@ -140,8 +167,7 @@ export const ProductDetailPage: React.FC = () => {
       <div style={S.container}>
         <button style={S.backBtn} onClick={() => navigate('/products')}>← Back to Catalog</button>
 
-        <div className="byr-pdp-layout">
-          {/* Left: Gallery */}
+        <div className="byr-pdp-layout" style={S.layout}>
           <div style={S.gallery}>
             <div style={S.mainImage}>
               {activeImage ? (
@@ -163,7 +189,6 @@ export const ProductDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Info */}
           <div style={S.infoCard}>
             <div>
               <span style={S.brand}>{product.brand}</span>
@@ -184,7 +209,6 @@ export const ProductDetailPage: React.FC = () => {
               <p style={S.taxNote}>inclusive of all taxes (GST {product.tax_percentage}%)</p>
             </div>
 
-            {/* Variants selection */}
             {showVariants && (
               <div style={S.variantsBlock}>
                 <h4 style={S.subTitle}>Select Size/Color Option</h4>
@@ -202,37 +226,36 @@ export const ProductDetailPage: React.FC = () => {
               </div>
             )}
 
-            {/* Stock Availability */}
             <div style={{ marginTop: '0.5rem' }}>
               <span style={S.stockBadge(inStock)}>
                 {inStock ? `In Stock (Only ${qtyAvailable} left)` : 'Out of Stock'}
               </span>
             </div>
 
-            {/* Action Buttons: Add to Cart and Wishlist */}
-            <div className="byr-pdp-actions">
+            <div className="byr-pdp-actions" style={{ display: 'flex', gap: '0.5rem' }}>
               <button
                 style={{
-                  flex: 1, padding: '0.85rem', border: 'none', background: inStock ? 'var(--byr-accent)' : 'var(--byr-text-muted)', color: '#fff',
-                  borderRadius: '8px', cursor: inStock ? 'pointer' : 'not-allowed', fontWeight: '700', fontSize: '1rem'
+                  flex: 1, padding: '0.85rem', border: 'none', background: (inStock && !isAdding) ? 'var(--byr-accent)' : 'var(--byr-text-muted)', color: '#fff',
+                  borderRadius: '8px', cursor: (inStock && !isAdding) ? 'pointer' : 'not-allowed', fontWeight: '700', fontSize: '1rem'
                 }}
                 onClick={handleAddToCart}
-                disabled={!inStock}
+                disabled={!inStock || isAdding}
               >
-                {inStock ? 'Add to Cart' : 'Out of Stock'}
+                {!inStock ? 'Out of Stock' : isAdding ? 'Adding...' : 'Add to Cart'}
               </button>
               <button
                 style={{
-                  padding: '0.85rem 1.5rem', border: '1px solid var(--byr-border)', background: 'var(--byr-card-bg)',
-                  color: 'var(--byr-text-2)', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem'
+                  padding: '0.85rem', width: '3.5rem', background: 'var(--byr-bg)', border: '1px solid var(--byr-border)',
+                  borderRadius: '8px', cursor: isWishlistLoading ? 'not-allowed' : 'pointer', fontSize: '1.25rem',
+                  color: isWishlisted ? 'var(--byr-accent)' : 'var(--byr-text-2)', transition: 'color 0.2s'
                 }}
                 onClick={handleAddToWishlist}
+                disabled={isWishlistLoading}
               >
-                ❤️ Wishlist
+                {isWishlisted ? '♥' : '♡'}
               </button>
             </div>
 
-            {/* Product Description */}
             <div style={{ borderTop: '1px solid var(--byr-border)', paddingTop: '1.25rem' }}>
               <h4 style={S.subTitle}>Product Description</h4>
               <p style={S.desc}>{product.description}</p>
