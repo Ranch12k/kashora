@@ -14,7 +14,7 @@ export const ProductListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const { isAuthenticated } = useAuth();
-  const [wishlistSlugs, setWishlistSlugs] = useState<Set<string>>(new Set());
+  const [wishlistItems, setWishlistItems] = useState<any[]>([]);
 
   // Filter & Search states from URL Params
   const query = searchParams.get('search') || '';
@@ -34,15 +34,47 @@ export const ProductListPage: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       wishlistAPI.list()
-        .then(res => {
-          const slugs = new Set<string>(res.data.map((item: any) => item.product_slug));
-          setWishlistSlugs(slugs);
-        })
+        .then(res => setWishlistItems(res.data))
         .catch(err => console.error(err));
     } else {
-      setWishlistSlugs(new Set());
+      setWishlistItems([]);
     }
   }, [isAuthenticated]);
+
+  const handleToggleWishlist = (e: React.MouseEvent, p: PublicProduct) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      alert('Please log in to use the wishlist.');
+      navigate('/login', { state: { from: '/products' } });
+      return;
+    }
+
+    const wishlistItem = wishlistItems.find(item => item.product_slug === p.slug);
+    if (wishlistItem) {
+      wishlistAPI.delete(wishlistItem.id)
+        .then(() => setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id)))
+        .catch(err => console.error(err));
+    } else {
+      if (p.default_variant_id) {
+        wishlistAPI.add(p.default_variant_id)
+          .then(res => setWishlistItems(prev => [...prev, res.data]))
+          .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'));
+      } else {
+        // Fallback if list API doesn't have default_variant_id yet
+        publicProductAPI.get(p.slug)
+          .then(res => {
+            if (res.data.variants && res.data.variants.length > 0) {
+              wishlistAPI.add(res.data.variants[0].id)
+                .then(wRes => setWishlistItems(prev => [...prev, wRes.data]))
+                .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'));
+            } else {
+              alert('This product has no available options to wishlist.');
+            }
+          })
+          .catch(() => alert('Failed to add item to wishlist.'));
+      }
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -407,9 +439,9 @@ export const ProductListPage: React.FC = () => {
                   return (
                     <div key={p.id} className="byr-card" onClick={() => navigate(`/products/${p.slug}`)}>
                       <div className="byr-card__img-wrap">
-                        <div className="byr-card__wishlist" onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.slug}`); }}>
-                          <span style={{ color: wishlistSlugs.has(p.slug) ? 'var(--byr-accent)' : 'inherit', transition: 'color 0.2s' }}>
-                            {wishlistSlugs.has(p.slug) ? '♥' : '♡'}
+                        <div className="byr-card__wishlist" onClick={(e) => handleToggleWishlist(e, p)}>
+                          <span style={{ color: wishlistItems.some(item => item.product_slug === p.slug) ? 'var(--byr-accent)' : 'inherit', transition: 'color 0.2s' }}>
+                            {wishlistItems.some(item => item.product_slug === p.slug) ? '♥' : '♡'}
                           </span>
                         </div>
                         {p.primary_image ? (

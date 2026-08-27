@@ -440,6 +440,7 @@ export interface PublicProduct {
   category_name: string;
   primary_image: string | null;
   in_stock: boolean;
+  default_variant_id: string | null;
   created_at: string;
 }
 
