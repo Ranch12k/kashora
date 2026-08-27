@@ -13,7 +13,7 @@ interface BuyerLayoutProps {
 export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, initialSearchVal = '' }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isCheckoutFlow = location.pathname === '/cart' || location.pathname === '/checkout';
+  const hideCatNav = location.pathname === '/cart' || location.pathname === '/checkout' || location.pathname.startsWith('/products/');
   const { user, logout, isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
@@ -122,6 +122,7 @@ export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, in
             <button onClick={toggleTheme} className="byr-theme-toggle" title="Toggle Theme">
               {theme === 'light' ? '🌙' : '☀️'}
             </button>
+            <Link to="/products" className="byr-nav-link">🏠 Home</Link>
             <Link to={getSellerRoute()} className="byr-nav-link byr-hide-mobile">Become a Seller</Link>
             <Link to="/investors" className="byr-nav-link byr-hide-mobile">Investor Relations</Link>
             <Link to="/cart" className="byr-nav-link">🛒 Cart {cartCount > 0 && `(${cartCount})`}</Link>
@@ -150,7 +151,7 @@ export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, in
           </div>
         </div>
 
-        {!isCheckoutFlow && (
+        {!hideCatNav && (
           <div className="byr-catnav">
             <div className="byr-catnav__inner">
               {categories.filter(c => !c.parent).slice(0, 10).map(cat => {

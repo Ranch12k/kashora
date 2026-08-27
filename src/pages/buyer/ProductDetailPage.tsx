@@ -5,38 +5,38 @@ import BuyerLayout from '../../components/BuyerLayout';
 
 const S = {
   container: { padding: '2rem 4%', width: '100%', maxWidth: '1280px', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
-  backBtn: { padding: '0.5rem 1rem', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: '#475569', fontSize: '0.85rem', marginBottom: '1.5rem' },
+  backBtn: { padding: '0.5rem 1rem', background: 'var(--byr-card-bg)', border: '1px solid var(--byr-border)', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: 'var(--byr-text-2)', fontSize: '0.85rem', marginBottom: '1.5rem' },
   layout: { display: 'grid', gridTemplateColumns: '1fr 500px', gap: '3rem' },
   gallery: { display: 'flex', flexDirection: 'column' as const, gap: '1rem' },
-  mainImage: { width: '100%', height: '450px', background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid #e2e8f0' },
+  mainImage: { width: '100%', height: '450px', background: 'var(--byr-card-bg)', borderRadius: '12px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid var(--byr-card-border)' },
   thumbnails: { display: 'flex', gap: '0.75rem', overflowX: 'auto' as const, paddingBottom: '0.5rem' },
   thumb: (active: boolean) => ({
-    width: '70px', height: '70px', borderRadius: '6px', objectFit: 'cover' as const, border: active ? '2px solid #f43f5e' : '1px solid #e2e8f0', cursor: 'pointer'
+    width: '70px', height: '70px', borderRadius: '6px', objectFit: 'cover' as const, border: active ? '2px solid var(--byr-accent)' : '1px solid var(--byr-card-border)', cursor: 'pointer'
   }),
   infoCard: { display: 'flex', flexDirection: 'column' as const, gap: '1.25rem' },
-  brand: { fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase' as const, color: '#f43f5e', letterSpacing: '0.05em' },
-  title: { fontSize: '1.75rem', fontWeight: '700', color: '#0f172a' },
-  category: { fontSize: '0.88rem', color: '#64748b' },
-  priceBlock: { background: '#fcfaff', padding: '1.25rem', borderRadius: '10px', border: '1px solid #f3e8ff' },
+  brand: { fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase' as const, color: 'var(--byr-accent)', letterSpacing: '0.05em' },
+  title: { fontSize: '1.75rem', fontWeight: '700', color: 'var(--byr-text-1)' },
+  category: { fontSize: '0.88rem', color: 'var(--byr-text-3)' },
+  priceBlock: { background: 'var(--byr-accent-light)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--byr-accent-light)' },
   priceRow: { display: 'flex', alignItems: 'baseline', gap: '0.75rem' },
-  price: { fontSize: '1.75rem', fontWeight: '800', color: '#f43f5e' },
-  comparePrice: { fontSize: '1.1rem', color: '#94a3b8', textDecoration: 'line-through' },
-  discount: { fontSize: '1rem', fontWeight: '700', color: '#10b981' },
-  taxNote: { fontSize: '0.78rem', color: '#94a3b8', marginTop: '0.4rem' },
-  variantsBlock: { borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' },
-  subTitle: { fontSize: '0.95rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.75rem' },
+  price: { fontSize: '1.75rem', fontWeight: '800', color: 'var(--byr-accent)' },
+  comparePrice: { fontSize: '1.1rem', color: 'var(--byr-text-muted)', textDecoration: 'line-through' },
+  discount: { fontSize: '1rem', fontWeight: '700', color: 'var(--badge-green-txt)' },
+  taxNote: { fontSize: '0.78rem', color: 'var(--byr-text-muted)', marginTop: '0.4rem' },
+  variantsBlock: { borderTop: '1px solid var(--byr-border)', paddingTop: '1.25rem' },
+  subTitle: { fontSize: '0.95rem', fontWeight: '700', color: 'var(--byr-text-1)', marginBottom: '0.75rem' },
   variantChips: { display: 'flex', gap: '0.6rem', flexWrap: 'wrap' as const },
   chip: (selected: boolean) => ({
-    padding: '0.5rem 1rem', borderRadius: '8px', border: selected ? '2px solid #f43f5e' : '1px solid #e2e8f0', background: selected ? '#fff1f2' : '#fff', color: selected ? '#f43f5e' : '#475569', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem'
+    padding: '0.5rem 1rem', borderRadius: '8px', border: selected ? '2px solid var(--byr-accent)' : '1px solid var(--byr-border)', background: selected ? 'var(--byr-accent-light)' : 'var(--byr-card-bg)', color: selected ? 'var(--byr-accent)' : 'var(--byr-text-2)', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem'
   }),
   stockBadge: (inStock: boolean) => ({
-    background: inStock ? '#d1fae5' : '#fee2e2',
-    color: inStock ? '#065f46' : '#991b1b',
+    background: inStock ? 'var(--badge-green-bg)' : 'var(--badge-red-bg)',
+    color: inStock ? 'var(--badge-green-txt)' : 'var(--badge-red-txt)',
     padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '700', display: 'inline-block'
   }),
-  sellerCard: { background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '1.5rem' },
-  desc: { color: '#475569', fontSize: '0.92rem', lineHeight: '1.6' },
-  policyRow: { display: 'flex', gap: '1.5rem', background: '#fafbff', padding: '1rem', borderRadius: '8px', border: '1.5px solid #eef2ff', marginTop: '1rem', fontSize: '0.82rem', color: '#4f46e5' }
+  sellerCard: { background: 'var(--byr-card-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--byr-border)', marginTop: '1.5rem' },
+  desc: { color: 'var(--byr-text-2)', fontSize: '0.92rem', lineHeight: '1.6' },
+  policyRow: { display: 'flex', gap: '1.5rem', background: 'var(--byr-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--byr-border)', marginTop: '1rem', fontSize: '0.82rem', color: 'var(--byr-text-2)' }
 };
 
 export const ProductDetailPage: React.FC = () => {
@@ -133,6 +133,8 @@ export const ProductDetailPage: React.FC = () => {
 
   const discountPct = currentComparePrice ? Math.round(((Number(currentComparePrice) - Number(currentPrice)) / Number(currentComparePrice)) * 100) : 0;
 
+  const showVariants = product.variants.length > 1 || (product.variants.length === 1 && product.variants[0].attribute_summary && product.variants[0].attribute_summary.toLowerCase() !== 'default');
+
   return (
     <BuyerLayout>
       <div style={S.container}>
@@ -183,7 +185,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Variants selection */}
-            {product.variants.length > 0 && (
+            {showVariants && (
               <div style={S.variantsBlock}>
                 <h4 style={S.subTitle}>Select Size/Color Option</h4>
                 <div style={S.variantChips}>
@@ -211,7 +213,7 @@ export const ProductDetailPage: React.FC = () => {
             <div className="byr-pdp-actions">
               <button
                 style={{
-                  flex: 1, padding: '0.85rem', border: 'none', background: inStock ? '#f43f5e' : '#cbd5e1', color: '#fff',
+                  flex: 1, padding: '0.85rem', border: 'none', background: inStock ? 'var(--byr-accent)' : 'var(--byr-text-muted)', color: '#fff',
                   borderRadius: '8px', cursor: inStock ? 'pointer' : 'not-allowed', fontWeight: '700', fontSize: '1rem'
                 }}
                 onClick={handleAddToCart}
@@ -221,8 +223,8 @@ export const ProductDetailPage: React.FC = () => {
               </button>
               <button
                 style={{
-                  padding: '0.85rem 1.5rem', border: '1px solid #cbd5e1', background: '#fff',
-                  color: '#475569', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem'
+                  padding: '0.85rem 1.5rem', border: '1px solid var(--byr-border)', background: 'var(--byr-card-bg)',
+                  color: 'var(--byr-text-2)', borderRadius: '8px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem'
                 }}
                 onClick={handleAddToWishlist}
               >
@@ -231,7 +233,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Product Description */}
-            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' }}>
+            <div style={{ borderTop: '1px solid var(--byr-border)', paddingTop: '1.25rem' }}>
               <h4 style={S.subTitle}>Product Description</h4>
               <p style={S.desc}>{product.description}</p>
             </div>
@@ -244,8 +246,8 @@ export const ProductDetailPage: React.FC = () => {
 
             {/* Seller / Store details */}
             <div style={S.sellerCard}>
-              <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Sold By</span>
-              <h5 style={{ fontSize: '0.98rem', fontWeight: '700', color: '#1e293b', marginTop: '0.2rem' }}>🏡 {product.seller_store}</h5>
+              <span style={{ fontSize: '0.75rem', color: 'var(--byr-text-3)', fontWeight: '700', textTransform: 'uppercase' }}>Sold By</span>
+              <h5 style={{ fontSize: '0.98rem', fontWeight: '700', color: 'var(--byr-text-1)', marginTop: '0.2rem' }}>🏡 {product.seller_store}</h5>
             </div>
           </div>
         </div>

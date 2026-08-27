@@ -13,18 +13,18 @@ const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
 
 const S = {
   container: { padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
-  title: { fontSize: '1.75rem', fontWeight: '700', color: '#1e293b', marginBottom: '1.5rem' },
-  card: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '2rem', marginBottom: '1.5rem' },
-  sectionTitle: { fontSize: '1rem', fontWeight: '700', color: '#1e293b', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' },
+  title: { fontSize: '1.75rem', fontWeight: '700', color: 'var(--byr-text-1)', marginBottom: '1.5rem' },
+  card: { background: 'var(--byr-card-bg)', borderRadius: '12px', border: '1px solid var(--byr-card-border)', padding: '2rem', marginBottom: '1.5rem' },
+  sectionTitle: { fontSize: '1rem', fontWeight: '700', color: 'var(--byr-text-1)', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--byr-border)' },
   fieldRow: { display: 'flex', gap: '1rem', marginBottom: '1rem' },
   field: { display: 'flex', flexDirection: 'column' as const, gap: '0.35rem', flex: 1 },
-  label: { fontSize: '0.82rem', fontWeight: '600', color: '#64748b' },
-  input: { padding: '0.6rem 0.85rem', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.9rem', outline: 'none' },
-  select: { padding: '0.6rem 0.85rem', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.9rem', background: '#fff', cursor: 'pointer' },
-  summaryRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: '#475569', padding: '0.4rem 0' },
-  totalRow: { display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', padding: '0.75rem 0', borderTop: '2px solid #f1f5f9', marginTop: '0.5rem' },
-  placeBtn: { width: '100%', padding: '1rem', background: '#f43f5e', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '1rem' },
-  errorMsg: { color: '#ef4444', fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: '#fef2f2', borderRadius: '6px' },
+  label: { fontSize: '0.82rem', fontWeight: '600', color: 'var(--byr-text-2)' },
+  input: { padding: '0.6rem 0.85rem', border: '1px solid var(--byr-border)', borderRadius: '6px', fontSize: '0.9rem', outline: 'none', background: 'var(--byr-bg)', color: 'var(--byr-text-1)' },
+  select: { padding: '0.6rem 0.85rem', border: '1px solid var(--byr-border)', borderRadius: '6px', fontSize: '0.9rem', background: 'var(--byr-bg)', color: 'var(--byr-text-1)', cursor: 'pointer' },
+  summaryRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--byr-text-2)', padding: '0.4rem 0' },
+  totalRow: { display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: '800', color: 'var(--byr-text-1)', padding: '0.75rem 0', borderTop: '2px solid var(--byr-border)', marginTop: '0.5rem' },
+  placeBtn: { width: '100%', padding: '1rem', background: 'var(--byr-accent)', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '1rem' },
+  errorMsg: { color: 'var(--badge-red-txt)', fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: 'var(--badge-red-bg)', borderRadius: '6px' },
 };
 
 interface FormData {
