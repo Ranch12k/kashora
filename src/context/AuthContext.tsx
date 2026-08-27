@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { authAPI, LoginResponse } from '../services/api';
+import { authAPI, cartAPI, LoginResponse } from '../services/api';
 
 interface User {
   id: string;
@@ -77,6 +77,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAccessToken(access);
       setRefreshToken(refresh);
       setUser(user);
+
+      // Sync guest cart to backend if items exist
+      try {
+        const guestCartStr = localStorage.getItem('guest_cart');
+        if (guestCartStr) {
+          const guestCart = JSON.parse(guestCartStr);
+          if (guestCart.items && guestCart.items.length > 0) {
+            await cartAPI.sync(guestCart.items.map((i: any) => ({ variant_id: i.variant_id, quantity: i.quantity })));
+            localStorage.removeItem('guest_cart');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to sync guest cart', err);
+      }
 
       return response.data;
     } catch (err: any) {

@@ -745,6 +745,8 @@ export const cartAPI = {
     }
     return apiClient.post('cart/clear/');
   },
+  sync: (items: { variant_id: string; quantity: number }[]) =>
+    apiClient.post<Cart>('cart/sync/', { items }),
 };
 
 export const wishlistAPI = {

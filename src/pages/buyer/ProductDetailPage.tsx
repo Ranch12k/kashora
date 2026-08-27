@@ -70,7 +70,7 @@ export const ProductDetailPage: React.FC = () => {
       alert('Please select a variant option first.');
       return;
     }
-    
+
     const selectedVariant = product?.variants.find(v => v.id === selectedVariantId);
     const guestItemDetails = {
       sku: selectedVariant?.sku || 'N/A',
@@ -82,7 +82,7 @@ export const ProductDetailPage: React.FC = () => {
 
     cartAPI.add(selectedVariantId, 1, guestItemDetails)
       .then(() => {
-        alert('Product added to shopping cart!');
+        // alert('Product added to shopping cart!');
         navigate('/cart');
       })
       .catch(err => {
@@ -130,14 +130,14 @@ export const ProductDetailPage: React.FC = () => {
   const currentComparePrice = selectedVariant ? selectedVariant.compare_at_price : product.compare_at_price;
   const inStock = selectedVariant ? selectedVariant.in_stock : product.in_stock;
   const qtyAvailable = selectedVariant ? selectedVariant.available_quantity : 0;
-  
+
   const discountPct = currentComparePrice ? Math.round(((Number(currentComparePrice) - Number(currentPrice)) / Number(currentComparePrice)) * 100) : 0;
 
   return (
     <BuyerLayout>
       <div style={S.container}>
         <button style={S.backBtn} onClick={() => navigate('/products')}>← Back to Catalog</button>
-        
+
         <div className="byr-pdp-layout">
           {/* Left: Gallery */}
           <div style={S.gallery}>

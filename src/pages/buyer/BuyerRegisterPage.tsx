@@ -252,7 +252,7 @@ const BuyerRegisterPage: React.FC = () => {
         <div className="auth-footer">
           <p>
             Already have a buyer account?{' '}
-            <Link to="/login" className="link">
+            <Link to="/login" state={{ from: location.state?.from }} className="link">
               Login here
             </Link>
           </p>
