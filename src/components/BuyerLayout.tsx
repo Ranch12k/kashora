@@ -13,7 +13,7 @@ interface BuyerLayoutProps {
 export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, initialSearchVal = '' }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const hideCatNav = location.pathname === '/cart' || location.pathname === '/checkout' || location.pathname.startsWith('/products/');
+  const hideCatNav = location.pathname === '/cart' || location.pathname === '/checkout' || location.pathname.startsWith('/products/') || location.pathname.startsWith('/orders');
   const { user, logout, isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
 
