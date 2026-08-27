@@ -115,20 +115,34 @@ export const ProductDetailPage: React.FC = () => {
     }
 
     if (isWishlisted) {
+      // Optimistic delete
+      setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id));
       setIsWishlistLoading(true);
       wishlistAPI.delete(wishlistItem.id)
-        .then(() => setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id)))
-        .catch(err => console.error(err))
+        .catch(err => {
+          console.error(err);
+          // Revert on error
+          setWishlistItems(prev => [...prev, wishlistItem]);
+        })
         .finally(() => setIsWishlistLoading(false));
     } else {
       if (!selectedVariantId) {
         alert('Please select a variant option first.');
         return;
       }
+      
+      // Optimistic add
+      const tempId = 'temp-' + Date.now();
+      const optimisticItem = { id: tempId, product_slug: product?.slug };
+      setWishlistItems(prev => [...prev, optimisticItem]);
+      
       setIsWishlistLoading(true);
       wishlistAPI.add(selectedVariantId)
-        .then(res => setWishlistItems(prev => [...prev, res.data]))
-        .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'))
+        .then(res => setWishlistItems(prev => prev.map(item => item.id === tempId ? { ...res.data, product_slug: product?.slug } : item)))
+        .catch(err => {
+          setWishlistItems(prev => prev.filter(item => item.id !== tempId));
+          alert(err.response?.data?.detail || 'Failed to add item to wishlist.');
+        })
         .finally(() => setIsWishlistLoading(false));
     }
   };

@@ -51,27 +51,49 @@ export const ProductListPage: React.FC = () => {
 
     const wishlistItem = wishlistItems.find(item => item.product_slug === p.slug);
     if (wishlistItem) {
+      // Optimistic delete
+      setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id));
       wishlistAPI.delete(wishlistItem.id)
-        .then(() => setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id)))
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+          // Revert on error
+          setWishlistItems(prev => [...prev, wishlistItem]);
+        });
     } else {
+      // Optimistic add
+      const tempId = 'temp-' + Date.now();
+      const optimisticItem = { id: tempId, product_slug: p.slug };
+      setWishlistItems(prev => [...prev, optimisticItem]);
+
       if (p.default_variant_id) {
         wishlistAPI.add(p.default_variant_id)
-          .then(res => setWishlistItems(prev => [...prev, res.data]))
-          .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'));
+          .then(res => setWishlistItems(prev => [...prev.filter(i => i.id !== tempId), { ...res.data, product_slug: p.slug }]))
+          .catch(err => {
+            setWishlistItems(prev => prev.filter(item => item.id !== tempId));
+            alert(err.response?.data?.detail || 'Failed to add item to wishlist.');
+          });
       } else {
         // Fallback if list API doesn't have default_variant_id yet
         publicProductAPI.get(p.slug)
           .then(res => {
             if (res.data.variants && res.data.variants.length > 0) {
               wishlistAPI.add(res.data.variants[0].id)
-                .then(wRes => setWishlistItems(prev => [...prev, wRes.data]))
-                .catch(err => alert(err.response?.data?.detail || 'Failed to add item to wishlist.'));
+                .then(wRes => {
+                  setWishlistItems(prev => prev.map(item => item.id === tempId ? { ...wRes.data, product_slug: p.slug } : item));
+                })
+                .catch(err => {
+                  setWishlistItems(prev => prev.filter(item => item.id !== tempId));
+                  alert(err.response?.data?.detail || 'Failed to add item to wishlist.');
+                });
             } else {
+              setWishlistItems(prev => prev.filter(item => item.id !== tempId));
               alert('This product has no available options to wishlist.');
             }
           })
-          .catch(() => alert('Failed to add item to wishlist.'));
+          .catch(() => {
+            setWishlistItems(prev => prev.filter(item => item.id !== tempId));
+            alert('Failed to add item to wishlist.');
+          });
       }
     }
   };
