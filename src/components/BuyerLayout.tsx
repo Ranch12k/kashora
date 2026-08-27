@@ -13,6 +13,7 @@ interface BuyerLayoutProps {
 export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, initialSearchVal = '' }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const isCheckoutFlow = location.pathname === '/cart' || location.pathname === '/checkout';
   const { user, logout, isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
@@ -149,57 +150,59 @@ export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, in
           </div>
         </div>
 
-        <div className="byr-catnav">
-          <div className="byr-catnav__inner">
-            {categories.filter(c => !c.parent).slice(0, 10).map(cat => {
-              const isActive = location.search.includes(cat.slug);
-              
-              const CAT_IMAGES: Record<string, string> = {
-                women: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=150&auto=format&fit=crop",
-                men: "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=150&auto=format&fit=crop",
-                kids: "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?q=80&w=150&auto=format&fit=crop",
-                home: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=150&auto=format&fit=crop",
-                electronics: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=150&auto=format&fit=crop",
-                beauty: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=150&auto=format&fit=crop",
-                footwear: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=150&auto=format&fit=crop",
-                bags: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=150&auto=format&fit=crop",
-                jewellery: "https://images.unsplash.com/photo-1599643478514-4a4e09d949c8?q=80&w=150&auto=format&fit=crop"
-              };
-              
-              const slug = cat.slug.toLowerCase();
-              let fallbackImg = "";
-              if (slug.includes("women")) fallbackImg = CAT_IMAGES.women;
-              else if (slug.includes("men")) fallbackImg = CAT_IMAGES.men;
-              else if (slug.includes("kid")) fallbackImg = CAT_IMAGES.kids;
-              else if (slug.includes("home") || slug.includes("kitchen")) fallbackImg = CAT_IMAGES.home;
-              else if (slug.includes("electronic")) fallbackImg = CAT_IMAGES.electronics;
-              else if (slug.includes("beauty")) fallbackImg = CAT_IMAGES.beauty;
-              else if (slug.includes("footwear") || slug.includes("shoe")) fallbackImg = CAT_IMAGES.footwear;
-              else if (slug.includes("bag")) fallbackImg = CAT_IMAGES.bags;
-              else if (slug.includes("jewel")) fallbackImg = CAT_IMAGES.jewellery;
+        {!isCheckoutFlow && (
+          <div className="byr-catnav">
+            <div className="byr-catnav__inner">
+              {categories.filter(c => !c.parent).slice(0, 10).map(cat => {
+                const isActive = location.search.includes(cat.slug);
+                
+                const CAT_IMAGES: Record<string, string> = {
+                  women: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=150&auto=format&fit=crop",
+                  men: "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=150&auto=format&fit=crop",
+                  kids: "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?q=80&w=150&auto=format&fit=crop",
+                  home: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=150&auto=format&fit=crop",
+                  electronics: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=150&auto=format&fit=crop",
+                  beauty: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=150&auto=format&fit=crop",
+                  footwear: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=150&auto=format&fit=crop",
+                  bags: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=150&auto=format&fit=crop",
+                  jewellery: "https://images.unsplash.com/photo-1599643478514-4a4e09d949c8?q=80&w=150&auto=format&fit=crop"
+                };
+                
+                const slug = cat.slug.toLowerCase();
+                let fallbackImg = "";
+                if (slug.includes("women")) fallbackImg = CAT_IMAGES.women;
+                else if (slug.includes("men")) fallbackImg = CAT_IMAGES.men;
+                else if (slug.includes("kid")) fallbackImg = CAT_IMAGES.kids;
+                else if (slug.includes("home") || slug.includes("kitchen")) fallbackImg = CAT_IMAGES.home;
+                else if (slug.includes("electronic")) fallbackImg = CAT_IMAGES.electronics;
+                else if (slug.includes("beauty")) fallbackImg = CAT_IMAGES.beauty;
+                else if (slug.includes("footwear") || slug.includes("shoe")) fallbackImg = CAT_IMAGES.footwear;
+                else if (slug.includes("bag")) fallbackImg = CAT_IMAGES.bags;
+                else if (slug.includes("jewel")) fallbackImg = CAT_IMAGES.jewellery;
 
-              const imgSrc = cat.image || fallbackImg || "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=150&auto=format&fit=crop";
+                const imgSrc = cat.image || fallbackImg || "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=150&auto=format&fit=crop";
 
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/products?category=${cat.slug}`}
-                  className={`byr-cat-item ${isActive ? 'byr-cat-item--active' : ''}`}
-                  onClick={() => {
-                    setTimeout(() => {
-                      document.getElementById('products-grid')?.scrollIntoView({ behavior: 'smooth' });
-                    }, 100);
-                  }}
-                >
-                  <div className="byr-cat-img-wrap">
-                    <img src={imgSrc} alt={cat.name} className="byr-cat-img" loading="lazy" />
-                  </div>
-                  <span className="byr-cat-label">{cat.name}</span>
-                </Link>
-              );
-            })}
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/products?category=${cat.slug}`}
+                    className={`byr-cat-item ${isActive ? 'byr-cat-item--active' : ''}`}
+                    onClick={() => {
+                      setTimeout(() => {
+                        document.getElementById('products-grid')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                  >
+                    <div className="byr-cat-img-wrap">
+                      <img src={imgSrc} alt={cat.name} className="byr-cat-img" loading="lazy" />
+                    </div>
+                    <span className="byr-cat-label">{cat.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </header>
 
       <main style={{ flex: 1, width: '100%' }}>
