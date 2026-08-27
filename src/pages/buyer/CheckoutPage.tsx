@@ -1,31 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { orderAPI, cartAPI, CheckoutPayload, ShippingAddress } from '../../services/api';
+import { orderAPI, cartAPI, CheckoutPayload } from '../../services/api';
 import BuyerLayout from '../../components/BuyerLayout';
 
-const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  PENDING: { bg: '#fef3c7', color: '#92400e' },
-  CONFIRMED: { bg: '#dbeafe', color: '#1e40af' },
-  SHIPPED: { bg: '#e0e7ff', color: '#3730a3' },
-  DELIVERED: { bg: '#d1fae5', color: '#065f46' },
-  CANCELLED: { bg: '#fee2e2', color: '#991b1b' },
-};
-
-const S = {
-  container: { padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
-  title: { fontSize: '1.75rem', fontWeight: '700', color: 'var(--byr-text-1)', marginBottom: '1.5rem' },
-  card: { background: 'var(--byr-card-bg)', borderRadius: '12px', border: '1px solid var(--byr-card-border)', padding: '2rem', marginBottom: '1.5rem' },
-  sectionTitle: { fontSize: '1rem', fontWeight: '700', color: 'var(--byr-text-1)', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--byr-border)' },
-  fieldRow: { display: 'flex', gap: '1rem', marginBottom: '1rem' },
-  field: { display: 'flex', flexDirection: 'column' as const, gap: '0.35rem', flex: 1 },
-  label: { fontSize: '0.82rem', fontWeight: '600', color: 'var(--byr-text-2)' },
-  input: { padding: '0.6rem 0.85rem', border: '1px solid var(--byr-border)', borderRadius: '6px', fontSize: '0.9rem', outline: 'none', background: 'var(--byr-bg)', color: 'var(--byr-text-1)' },
-  select: { padding: '0.6rem 0.85rem', border: '1px solid var(--byr-border)', borderRadius: '6px', fontSize: '0.9rem', background: 'var(--byr-bg)', color: 'var(--byr-text-1)', cursor: 'pointer' },
-  summaryRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--byr-text-2)', padding: '0.4rem 0' },
-  totalRow: { display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: '800', color: 'var(--byr-text-1)', padding: '0.75rem 0', borderTop: '2px solid var(--byr-border)', marginTop: '0.5rem' },
-  placeBtn: { width: '100%', padding: '1rem', background: 'var(--byr-accent)', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '1rem' },
-  errorMsg: { color: 'var(--badge-red-txt)', fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: 'var(--badge-red-bg)', borderRadius: '6px' },
-};
 
 interface FormData {
   full_name: string;

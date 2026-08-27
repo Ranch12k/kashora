@@ -16,7 +16,7 @@ export const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children, onSearch, in
   const hideCatNav = location.pathname === '/cart' || location.pathname === '/checkout' || location.pathname.startsWith('/products/');
   const { user, logout, isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
+
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchVal, setSearchVal] = useState(initialSearchVal);
   const [suggestions, setSuggestions] = useState<string[]>([]);

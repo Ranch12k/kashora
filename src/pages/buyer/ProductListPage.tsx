@@ -116,7 +116,7 @@ export const ProductListPage: React.FC = () => {
       })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
-  }, [query, selectedCatSlug, minPrice, maxPrice, availability, ordering, page]);
+  }, [query, selectedCatSlug, minPrice, maxPrice, availability, brand, ordering, page]);
 
   const updateParam = (key: string, value: string) => {
     const updated = new URLSearchParams(searchParams);
