@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 const S = {
   container: { padding: '2rem 4%', width: '100%', maxWidth: '1280px', boxSizing: 'border-box' as const, margin: '0 auto', fontFamily: "'Outfit', 'Inter', sans-serif" },
   backBtn: { padding: '0.5rem 1rem', background: 'var(--byr-card-bg)', border: '1px solid var(--byr-border)', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: 'var(--byr-text-2)', fontSize: '0.85rem', marginBottom: '1.5rem' },
-  layout: { display: 'grid', gridTemplateColumns: '1fr 500px', gap: '3rem' },
   gallery: { display: 'flex', flexDirection: 'column' as const, gap: '1rem' },
   mainImage: { width: '100%', height: '450px', background: 'var(--byr-card-bg)', borderRadius: '12px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid var(--byr-card-border)' },
   thumbnails: { display: 'flex', gap: '0.75rem', overflowX: 'auto' as const, paddingBottom: '0.5rem' },
@@ -181,7 +180,7 @@ export const ProductDetailPage: React.FC = () => {
       <div style={S.container}>
         <button style={S.backBtn} onClick={() => navigate('/products')}>← Back to Catalog</button>
 
-        <div className="byr-pdp-layout" style={S.layout}>
+        <div className="byr-pdp-layout">
           <div style={S.gallery}>
             <div style={S.mainImage}>
               {activeImage ? (

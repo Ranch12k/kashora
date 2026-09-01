@@ -592,7 +592,7 @@
 /* Product Detail Page (PDP) Specific */
 .byr-pdp-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 500px;
   gap: 3rem;
   align-items: start;
 }
