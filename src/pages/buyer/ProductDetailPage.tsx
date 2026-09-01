@@ -232,7 +232,7 @@ export const ProductDetailPage: React.FC = () => {
                       style={S.chip(selectedVariantId === v.id)}
                       onClick={() => setSelectedVariantId(v.id)}
                     >
-                      {v.attribute_summary}
+                      {v.attribute_summary || (v.sku ? v.sku.split('-').pop() : 'Standard')}
                     </button>
                   ))}
                 </div>
